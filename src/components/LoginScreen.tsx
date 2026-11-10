@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import ThemeToggle from './ThemeToggle';
 import { CheckIcon } from './icons';
+import type { Theme } from '../types';
 
 type AuthMode = 'login' | 'register';
 
@@ -8,12 +10,16 @@ interface LoginScreenProps {
   onLogin: (email: string, password: string) => Promise<void>;
   onRegister: (name: string, email: string, password: string) => Promise<void>;
   initialError?: string | null;
+  theme: Theme;
+  onToggleTheme: () => void;
 }
 
 export default function LoginScreen({
   onLogin,
   onRegister,
   initialError = null,
+  theme,
+  onToggleTheme,
 }: LoginScreenProps) {
   const [mode, setMode] = useState<AuthMode>('login');
   const [name, setName] = useState('');
@@ -78,6 +84,8 @@ export default function LoginScreen({
 
   return (
     <main className="login-page">
+      <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+
       <section className="login-card" aria-labelledby="login-heading">
         <span className="login-mark brand-mark" aria-hidden="true">
           <CheckIcon size={20} />

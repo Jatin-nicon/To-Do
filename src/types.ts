@@ -93,3 +93,5 @@ export type WorkspaceView =
   | { kind: 'team'; teamId: string };
 
 export type TeamTab = 'tasks' | 'members';
+
+export type Theme = 'light' | 'dark';

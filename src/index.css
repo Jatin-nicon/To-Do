@@ -3,7 +3,7 @@
   --surface: #ffffff;
   --surface-soft: #f7f8fc;
   --text: #1b1e2b;
-  --muted: #767c8f;
+  --muted: #6b7183;
   --border: #e6e8f1;
   --accent: #5b5bd6;
   --accent-strong: #4747c2;
@@ -16,7 +16,88 @@
   --warning-soft: #fff6e6;
   --warning-border: #f0ddb6;
   --shadow: 0 24px 50px -24px rgba(32, 36, 66, 0.28);
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-strong: rgba(255, 255, 255, 0.84);
+  --on-accent: #fff;
+  --text-soft: #4a4f60;
+  --muted-soft: rgba(107, 113, 131, 0.9);
+  --muted-faint: rgba(107, 113, 131, 0.8);
+  --muted-faintest: rgba(107, 113, 131, 0.5);
+  --muted-placeholder: rgba(107, 113, 131, 0.75);
+  --muted-border: rgba(107, 113, 131, 0.45);
+  --hover-soft: rgba(107, 113, 131, 0.12);
+  --accent-border: rgba(91, 91, 214, 0.18);
+  --accent-border-strong: rgba(91, 91, 214, 0.55);
+  --accent-dashed: rgba(91, 91, 214, 0.35);
+  --accent-ring: rgba(91, 91, 214, 0.14);
+  --accent-ring-soft: rgba(91, 91, 214, 0.12);
+  --accent-ring-strong: rgba(91, 91, 214, 0.5);
+  --accent-faint: rgba(91, 91, 214, 0.08);
+  --accent-gradient-end: #8a7bf0;
+  --success-gradient-end: #55c98f;
+  --success-border-soft: rgba(44, 154, 104, 0.2);
+  --danger-border: rgba(210, 76, 92, 0.35);
+  --danger-border-soft: rgba(210, 76, 92, 0.22);
+  --danger-hover-soft: rgba(210, 76, 92, 0.12);
+  --danger-text-soft: rgba(155, 55, 67, 0.85);
+  --skeleton-highlight: #eef0f6;
+  --shadow-tabs: 0 12px 30px -24px rgba(32, 36, 66, 0.4);
+  --shadow-tab-active: 0 6px 16px -12px rgba(32, 36, 66, 0.5);
+  --shadow-login-tab: 0 2px 8px -3px rgba(32, 36, 66, 0.35);
+  --bg-glow-accent: rgba(91, 91, 214, 0.14);
+  --bg-glow-success: rgba(44, 154, 104, 0.1);
   color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #0d1020;
+  --surface: #171b2e;
+  --surface-soft: #1e2338;
+  --text: #eef1fb;
+  --muted: #a2aac4;
+  --border: #2c3450;
+  --accent: #8b8bf6;
+  --accent-strong: #a6a6ff;
+  --accent-soft: #262a4d;
+  --success: #5ad19c;
+  --success-soft: #123326;
+  --danger: #ff8794;
+  --danger-soft: #3a1824;
+  --warning: #f0bd66;
+  --warning-soft: #3a2b12;
+  --warning-border: #6a5026;
+  --shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.72);
+  --surface-glass: rgba(23, 27, 46, 0.78);
+  --surface-glass-strong: rgba(23, 27, 46, 0.88);
+  --on-accent: #12152b;
+  --text-soft: #cdd3e6;
+  --muted-soft: rgba(162, 170, 196, 0.85);
+  --muted-faint: rgba(162, 170, 196, 0.72);
+  --muted-faintest: rgba(162, 170, 196, 0.45);
+  --muted-placeholder: rgba(162, 170, 196, 0.65);
+  --muted-border: rgba(162, 170, 196, 0.45);
+  --hover-soft: rgba(162, 170, 196, 0.14);
+  --accent-border: rgba(139, 139, 246, 0.32);
+  --accent-border-strong: rgba(139, 139, 246, 0.7);
+  --accent-dashed: rgba(139, 139, 246, 0.45);
+  --accent-ring: rgba(139, 139, 246, 0.2);
+  --accent-ring-soft: rgba(139, 139, 246, 0.16);
+  --accent-ring-strong: rgba(139, 139, 246, 0.65);
+  --accent-faint: rgba(139, 139, 246, 0.12);
+  --accent-gradient-end: #b3a5ff;
+  --success-gradient-end: #7ce7b7;
+  --success-border-soft: rgba(90, 209, 156, 0.35);
+  --danger-border: rgba(255, 135, 148, 0.45);
+  --danger-border-soft: rgba(255, 135, 148, 0.28);
+  --danger-hover-soft: rgba(255, 135, 148, 0.16);
+  --danger-text-soft: rgba(255, 135, 148, 0.88);
+  --skeleton-highlight: #272e48;
+  --shadow-tabs: 0 12px 30px -24px rgba(0, 0, 0, 0.7);
+  --shadow-tab-active: 0 6px 16px -12px rgba(0, 0, 0, 0.75);
+  --shadow-login-tab: 0 2px 8px -3px rgba(0, 0, 0, 0.6);
+  --bg-glow-accent: rgba(91, 91, 214, 0.26);
+  --bg-glow-success: rgba(44, 154, 104, 0.14);
+  color-scheme: dark;
 }
 
 * {
@@ -32,8 +113,8 @@ body {
   margin: 0;
   padding: 40px 20px 64px;
   background:
-    radial-gradient(900px 500px at 12% -10%, rgba(91, 91, 214, 0.14), transparent 65%),
-    radial-gradient(700px 450px at 100% 0%, rgba(44, 154, 104, 0.1), transparent 60%),
+    radial-gradient(900px 500px at 12% -10%, var(--bg-glow-accent), transparent 65%),
+    radial-gradient(700px 450px at 100% 0%, var(--bg-glow-success), transparent 60%),
     var(--bg);
   background-attachment: fixed;
   color: var(--text);
@@ -80,7 +161,7 @@ textarea {
   place-items: center;
   border-radius: 12px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   box-shadow: 0 10px 20px -10px rgba(91, 91, 214, 0.8);
 }
 
@@ -103,7 +184,7 @@ h1 {
   padding: 7px 13px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface-glass);
   color: var(--muted);
   font-size: 12.5px;
   font-weight: 600;
@@ -117,6 +198,32 @@ h1 {
   min-width: 0;
 }
 
+.theme-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-glass);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-border-strong);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
 .account {
   display: flex;
   align-items: center;
@@ -125,7 +232,7 @@ h1 {
   padding: 3px 4px 3px 4px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface-glass);
 }
 
 .avatar {
@@ -201,7 +308,7 @@ h1 {
   padding: 16px 14px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.84);
+  background: var(--surface-glass-strong);
   box-shadow: var(--shadow);
   backdrop-filter: blur(6px);
 }
@@ -273,7 +380,7 @@ h1 {
 }
 
 .nav-item.active {
-  border-color: rgba(91, 91, 214, 0.18);
+  border-color: var(--accent-border);
   background: var(--accent-soft);
   color: var(--accent);
 }
@@ -300,7 +407,7 @@ h1 {
 
 .nav-item.active .nav-count {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .team-nav-list {
@@ -315,7 +422,7 @@ h1 {
 }
 
 .team-nav.active {
-  border-color: rgba(91, 91, 214, 0.18);
+  border-color: var(--accent-border);
   background: var(--accent-soft);
 }
 
@@ -326,8 +433,8 @@ h1 {
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), #8a7bf0);
-  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-gradient-end));
+  color: var(--on-accent);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -395,7 +502,7 @@ h1 {
   gap: 6px;
   width: 100%;
   padding: 8px 10px;
-  border: 1px dashed rgba(91, 91, 214, 0.35);
+  border: 1px dashed var(--accent-dashed);
   border-radius: 10px;
   background: transparent;
   color: var(--accent);
@@ -441,7 +548,7 @@ h1 {
 .new-team-form input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.14);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 .new-team-actions {
@@ -455,7 +562,7 @@ h1 {
   border: none;
   border-radius: 7px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -467,7 +574,7 @@ h1 {
 }
 
 .new-team-actions button[type="button"]:hover {
-  background: rgba(118, 124, 143, 0.12);
+  background: var(--hover-soft);
   color: var(--text);
 }
 
@@ -514,7 +621,7 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 18px;
   background:
-    radial-gradient(420px 180px at 100% 0%, rgba(91, 91, 214, 0.12), transparent 70%),
+    radial-gradient(420px 180px at 100% 0%, var(--accent-ring-soft), transparent 70%),
     var(--surface);
   box-shadow: var(--shadow);
 }
@@ -576,8 +683,8 @@ h1 {
   padding: 5px;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 12px 30px -24px rgba(32, 36, 66, 0.4);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-tabs);
 }
 
 .team-tab {
@@ -606,7 +713,7 @@ h1 {
 .team-tab[aria-pressed="true"] {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 6px 16px -12px rgba(32, 36, 66, 0.5);
+  box-shadow: var(--shadow-tab-active);
 }
 
 .team-tab[aria-pressed="true"] .filter-count {
@@ -626,7 +733,7 @@ h1 {
 .team-hint {
   margin: 0;
   padding: 0 4px;
-  color: rgba(118, 124, 143, 0.9);
+  color: var(--muted-soft);
   font-size: 11.5px;
   line-height: 1.5;
   text-align: center;
@@ -669,7 +776,7 @@ h1 {
 }
 
 .person-chip.assignee {
-  border-color: rgba(91, 91, 214, 0.18);
+  border-color: var(--accent-border);
   background: var(--accent-soft);
   color: var(--accent);
 }
@@ -759,7 +866,7 @@ h1 {
 .invite-row input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.14);
+  box-shadow: 0 0 0 3px var(--accent-ring);
   background: var(--surface);
 }
 
@@ -772,7 +879,7 @@ h1 {
   border: none;
   border-radius: 10px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -923,7 +1030,7 @@ h1 {
   gap: 7px;
   margin: 0;
   padding: 0 4px;
-  color: rgba(118, 124, 143, 0.9);
+  color: var(--muted-soft);
   font-size: 11.5px;
   line-height: 1.5;
 }
@@ -939,7 +1046,7 @@ h1 {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
-  border: 1px solid rgba(210, 76, 92, 0.22);
+  border: 1px solid var(--danger-border-soft);
   border-radius: 18px;
   background: var(--danger-soft);
 }
@@ -950,7 +1057,7 @@ h1 {
 
 .danger-zone p {
   margin: 3px 0 0;
-  color: rgba(155, 55, 67, 0.85);
+  color: var(--danger-text-soft);
   font-size: 12px;
   line-height: 1.45;
 }
@@ -958,7 +1065,7 @@ h1 {
 .danger-btn {
   flex: none;
   padding: 8px 13px;
-  border: 1px solid rgba(210, 76, 92, 0.35);
+  border: 1px solid var(--danger-border);
   border-radius: 9px;
   background: var(--surface);
   color: var(--danger);
@@ -970,7 +1077,7 @@ h1 {
 
 .danger-btn:hover {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* Team task options */
@@ -1003,8 +1110,8 @@ h1 {
   padding: 5px;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 12px 30px -24px rgba(32, 36, 66, 0.4);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-tabs);
 }
 
 .filter-tab {
@@ -1033,11 +1140,11 @@ h1 {
 .filter-tab[aria-pressed="true"] {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 6px 16px -12px rgba(32, 36, 66, 0.5);
+  box-shadow: var(--shadow-tab-active);
 }
 
 .filter-tab:focus-visible {
-  outline: 3px solid rgba(91, 91, 214, 0.5);
+  outline: 3px solid var(--accent-ring-strong);
   outline-offset: 1px;
 }
 
@@ -1064,7 +1171,7 @@ h1 {
 
 .filter-tab[aria-pressed="true"].has-overdue .filter-count {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* Add task */
@@ -1080,8 +1187,8 @@ h1 {
 }
 
 .add-card:focus-within {
-  border-color: rgba(91, 91, 214, 0.55);
-  box-shadow: var(--shadow), 0 0 0 4px rgba(91, 91, 214, 0.12);
+  border-color: var(--accent-border-strong);
+  box-shadow: var(--shadow), 0 0 0 4px var(--accent-ring-soft);
 }
 
 .add-row {
@@ -1117,7 +1224,7 @@ h1 {
   border: none;
   border-radius: 12px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   cursor: pointer;
   box-shadow: 0 10px 22px -10px rgba(91, 91, 214, 0.8);
   transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
@@ -1211,8 +1318,9 @@ h1 {
 .new-team-actions button:focus-visible,
 .invite-row button:focus-visible,
 .member-remove:focus-visible,
-.danger-btn:focus-visible {
-  outline: 3px solid rgba(91, 91, 214, 0.5);
+.danger-btn:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--accent-ring-strong);
   outline-offset: 2px;
 }
 
@@ -1225,7 +1333,7 @@ h1 {
   gap: 14px;
   margin-bottom: 18px;
   padding: 12px 14px 12px 16px;
-  border: 1px solid rgba(210, 76, 92, 0.25);
+  border: 1px solid var(--danger-border-soft);
   border-radius: 12px;
   background: var(--danger-soft);
   color: var(--danger);
@@ -1251,7 +1359,7 @@ h1 {
 }
 
 .error-actions button:hover {
-  background: rgba(210, 76, 92, 0.12);
+  background: var(--danger-hover-soft);
 }
 
 /* Panels */
@@ -1356,7 +1464,7 @@ h1 {
   place-items: center;
   margin-top: 1px;
   padding: 0;
-  border: 2px solid rgba(118, 124, 143, 0.45);
+  border: 2px solid var(--muted-border);
   border-radius: 50%;
   background: transparent;
   color: transparent;
@@ -1412,7 +1520,7 @@ h1 {
 }
 
 .due.overdue {
-  border-color: rgba(210, 76, 92, 0.2);
+  border-color: var(--danger-border-soft);
   background: var(--danger-soft);
   color: var(--danger);
 }
@@ -1441,12 +1549,12 @@ h1 {
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), #8a7bf0);
+  background: linear-gradient(90deg, var(--accent), var(--accent-gradient-end));
   transition: width 0.25s ease;
 }
 
 .progress-fill.complete {
-  background: linear-gradient(90deg, var(--success), #55c98f);
+  background: linear-gradient(90deg, var(--success), var(--success-gradient-end));
 }
 
 .progress-value {
@@ -1583,7 +1691,7 @@ h1 {
 .update-form textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.14);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 .update-form button[type="submit"] {
@@ -1592,7 +1700,7 @@ h1 {
   border: none;
   border-radius: 9px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1725,7 +1833,7 @@ h1 {
 }
 
 .history-date {
-  color: rgba(118, 124, 143, 0.8);
+  color: var(--muted-faint);
   font-size: 12px;
 }
 
@@ -1754,20 +1862,20 @@ h1 {
 }
 
 .history-chip.success {
-  border-color: rgba(44, 154, 104, 0.2);
+  border-color: var(--success-border-soft);
   background: var(--success-soft);
   color: var(--success);
 }
 
 .history-chip.late {
-  border-color: rgba(210, 76, 92, 0.2);
+  border-color: var(--danger-border-soft);
   background: var(--danger-soft);
   color: var(--danger);
 }
 
 .history-sub {
   margin-top: 2px;
-  color: rgba(118, 124, 143, 0.8);
+  color: var(--muted-faint);
   font-size: 11.5px;
 }
 
@@ -1781,7 +1889,7 @@ h1 {
 
 .history-no-updates {
   margin-top: 2px;
-  color: rgba(118, 124, 143, 0.8);
+  color: var(--muted-faint);
   font-size: 11.5px;
 }
 
@@ -1796,13 +1904,13 @@ h1 {
 .empty svg {
   display: block;
   margin: 0 auto 10px;
-  color: rgba(118, 124, 143, 0.5);
+  color: var(--muted-faintest);
 }
 
 .empty p {
   margin: 0;
   font-weight: 600;
-  color: #4a4f60;
+  color: var(--text-soft);
 }
 
 .empty span {
@@ -1830,7 +1938,7 @@ h1 {
   background: linear-gradient(
     90deg,
     var(--surface-soft) 25%,
-    #eef0f6 37%,
+    var(--skeleton-highlight) 37%,
     var(--surface-soft) 63%
   );
   background-size: 400% 100%;
@@ -1845,13 +1953,13 @@ h1 {
   margin: 0;
   text-align: center;
   font-size: 12.5px;
-  color: rgba(118, 124, 143, 0.9);
+  color: var(--muted-soft);
 }
 
 .storage-note code {
   padding: 2px 5px;
   border-radius: 5px;
-  background: rgba(91, 91, 214, 0.08);
+  background: var(--accent-faint);
   color: var(--accent-strong);
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 11.5px;
@@ -1860,11 +1968,22 @@ h1 {
 /* Authentication */
 
 .login-page {
+  position: relative;
   min-height: calc(100vh - 104px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px 0;
+}
+
+.login-page > .theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  box-shadow: 0 10px 26px -18px rgba(15, 18, 38, 0.55);
 }
 
 .login-card {
@@ -1915,7 +2034,7 @@ h1 {
 .login-tabs button.is-active {
   background: var(--surface);
   color: var(--accent);
-  box-shadow: 0 2px 8px -3px rgba(32, 36, 66, 0.35);
+  box-shadow: var(--shadow-login-tab);
 }
 
 .login-tabs button:disabled {
@@ -1962,14 +2081,14 @@ h1 {
 }
 
 .login-field input::placeholder {
-  color: rgba(118, 124, 143, 0.75);
+  color: var(--muted-placeholder);
 }
 
 .login-field input:focus {
   outline: none;
   border-color: var(--accent);
   background: var(--surface);
-  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.12);
+  box-shadow: 0 0 0 3px var(--accent-ring-soft);
 }
 
 .login-field input:disabled {
@@ -1993,7 +2112,7 @@ h1 {
   border: none;
   border-radius: 10px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -2011,7 +2130,7 @@ h1 {
 
 .login-note {
   margin: 16px 0 0;
-  color: rgba(118, 124, 143, 0.9);
+  color: var(--muted-soft);
   font-size: 11.5px;
   line-height: 1.5;
   text-align: center;
@@ -2122,6 +2241,13 @@ h1 {
 
   .login-page {
     min-height: calc(100vh - 72px);
+  }
+
+  .login-page > .theme-toggle {
+    top: 16px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
   }
 
   .login-card {

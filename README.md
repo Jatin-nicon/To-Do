@@ -83,6 +83,14 @@ are protected with `scrypt` password hashes and signed session cookies.
 - Every personal task and history entry belongs to exactly one account.
 - Invited team emails link to the matching account on registration or sign-in.
 
+### 🎨 Light & Dark Themes
+- One-click theme toggle in the app header and on the sign-in screen.
+- Follows the operating system preference on first visit.
+- Remembers the chosen theme in `localStorage` and applies it before React
+  renders, so there is no flash of the wrong theme.
+- Theme colors are defined as CSS variables for consistent contrast throughout
+  the app.
+
 ### 🛡 Reliable Storage
 - Plain JSON files in `data/` — no database server required.
 - Atomic writes via temporary files and `fs.rename`.
@@ -151,12 +159,14 @@ todo-app/
 │   │   ├── TaskList.tsx
 │   │   ├── TeamTaskForm.tsx
 │   │   ├── TeamView.tsx
+│   │   ├── ThemeToggle.tsx
 │   │   └── icons.tsx
 │   ├── api.ts                  # Typed client API wrapper
 │   ├── App.tsx                 # App layout, routing, and polling
 │   ├── format.ts               # Date and deadline helpers
-│   ├── index.css               # Theme tokens and styles
+│   ├── index.css               # Light/dark theme tokens and styles
 │   ├── main.tsx                # React entry point
+│   ├── theme.ts                # Theme detection, persistence, and application
 │   └── types.ts                # Shared TypeScript types
 ├── .env.example                # Environment template
 ├── .gitignore
@@ -256,6 +266,14 @@ that account inherits the previous personal tasks and team ownership.
    registers or signs in, it links to that account automatically.
 3. Add shared tasks and assign them to a teammate.
 4. Team owners can remove members or delete the team; members can leave.
+
+### Theme
+- Click the sun/moon button in the top-right of the header, or on the sign-in
+  screen, to switch between light and dark mode.
+- The first visit uses your operating system preference. After that, the app
+  remembers the theme you picked under the `todo-theme` key in `localStorage`.
+- The preference is applied before the app loads, so the page opens directly in
+  the selected theme.
 
 ---
 

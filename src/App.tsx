@@ -5,6 +5,8 @@ import LoginScreen from './components/LoginScreen';
 import PersonalView from './components/PersonalView';
 import Sidebar from './components/Sidebar';
 import TeamView from './components/TeamView';
+import ThemeToggle from './components/ThemeToggle';
+import { applyTheme, getInitialTheme } from './theme';
 import type {
   AppState,
   TaskFilter,
@@ -12,6 +14,7 @@ import type {
   TeamRole,
   TeamSummary,
   TeamTab,
+  Theme,
   UserProfile,
   WorkspaceView,
 } from './types';
@@ -41,6 +44,7 @@ export default function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const [sessionMessage, setSessionMessage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [state, setState] = useState<AppState>(emptyState);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,6 +67,10 @@ export default function App() {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   useEffect(() => {
     let cancelled = false;
@@ -155,6 +163,10 @@ export default function App() {
     setError(null);
     setUser(null);
   }, [resetWorkspace]);
+
+  const handleToggleTheme = useCallback(() => {
+    setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
+  }, []);
 
   const updateTeamSummary = useCallback((next: Team) => {
     setTeams((current) =>
@@ -579,6 +591,8 @@ export default function App() {
         onLogin={handleLogin}
         onRegister={handleRegister}
         initialError={sessionMessage ?? error}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
     );
   }
@@ -597,6 +611,7 @@ export default function App() {
         </div>
 
         <div className="header-right">
+          <ThemeToggle theme={theme} onToggle={handleToggleTheme} />
           <span className="today-badge">{todayLabel}</span>
           <div className="account">
             {user.picture ? (
