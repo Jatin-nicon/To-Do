@@ -1,12 +1,18 @@
 import { useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import type { TeamMember } from '../types';
-import { CalendarIcon, PlusIcon, UsersIcon } from './icons';
+import { CATEGORIES, DEFAULT_CATEGORY } from '../categories';
+import type { Category, TeamMember } from '../types';
+import { CalendarIcon, PlusIcon, TagIcon, UsersIcon } from './icons';
 
 interface TeamTaskFormProps {
   members: TeamMember[];
   currentUserEmail: string;
-  onAdd: (text: string, dueAt: string | null, assigneeEmail: string) => Promise<boolean>;
+  onAdd: (
+    text: string,
+    dueAt: string | null,
+    assigneeEmail: string,
+    category: Category,
+  ) => Promise<boolean>;
 }
 
 export default function TeamTaskForm({
@@ -17,10 +23,12 @@ export default function TeamTaskForm({
   const [text, setText] = useState('');
   const [dueAt, setDueAt] = useState('');
   const [assigneeEmail, setAssigneeEmail] = useState(currentUserEmail);
+  const [category, setCategory] = useState<Category>(DEFAULT_CATEGORY);
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const deadlineId = useId();
   const assigneeId = useId();
+  const categoryId = useId();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,7 +48,7 @@ export default function TeamTaskForm({
     }
 
     setSubmitting(true);
-    const added = await onAdd(value, dueIso, assigneeEmail);
+    const added = await onAdd(value, dueIso, assigneeEmail, category);
     setSubmitting(false);
 
     if (added) {
@@ -106,6 +114,24 @@ export default function TeamTaskForm({
               {member.email === currentUserEmail
                 ? `${member.name ?? member.email} (you)`
                 : member.name ?? member.email}
+            </option>
+          ))}
+        </select>
+
+        <label className="deadline-label category-label" htmlFor={categoryId}>
+          <TagIcon />
+          Category
+        </label>
+        <select
+          id={categoryId}
+          className={`category-picker cat-${category}`}
+          value={category}
+          onChange={(event) => setCategory(event.target.value as Category)}
+          disabled={submitting}
+        >
+          {CATEGORIES.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
             </option>
           ))}
         </select>

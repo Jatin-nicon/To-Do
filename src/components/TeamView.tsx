@@ -1,4 +1,7 @@
+import { useState } from 'react';
+import { CATEGORIES, categoryLabel } from '../categories';
 import type {
+  Category,
   Task,
   TaskComment,
   TaskFilter,
@@ -6,6 +9,8 @@ import type {
   TeamTab,
   UserProfile,
 } from '../types';
+import CategoryFilter from './CategoryFilter';
+import type { CategoryFilterValue } from './CategoryFilter';
 import FilterTabs from './FilterTabs';
 import HistoryList from './HistoryList';
 import MembersPanel from './MembersPanel';
@@ -39,10 +44,12 @@ interface TeamViewProps {
     text: string,
     dueAt: string | null,
     assigneeEmail: string,
+    category: Category,
   ) => Promise<boolean>;
   onCompleteTask: (id: string) => void;
   onRestoreTask: (id: string) => void;
   onDeleteTask: (id: string) => void;
+  onCategoryChange: (id: string, category: Category) => void;
   onAddComment: (
     taskId: string,
     text: string,
@@ -69,6 +76,7 @@ export default function TeamView({
   onCompleteTask,
   onRestoreTask,
   onDeleteTask,
+  onCategoryChange,
   onAddComment,
   onDeleteComment,
   onClearHistory,
@@ -76,6 +84,8 @@ export default function TeamView({
   onRemoveMember,
   onDeleteTeam,
 }: TeamViewProps) {
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilterValue>('all');
+
   const currentEmail = user.email.toLowerCase();
   const isOwner =
     team.ownerSub === user.sub || team.ownerEmail === currentEmail;
@@ -106,18 +116,37 @@ export default function TeamView({
     return isOwner || isSamePerson(comment.author);
   }
 
-  const orderedTasks = [...team.tasks].sort(
+  const categoryTasks = team.tasks.filter(
+    (task) => categoryFilter === 'all' || task.category === categoryFilter,
+  );
+  const categoryHistory = team.history.filter(
+    (entry) => categoryFilter === 'all' || entry.category === categoryFilter,
+  );
+
+  const orderedTasks = [...categoryTasks].sort(
     (first, second) => deadlineValue(first) - deadlineValue(second),
   );
   const pendingTasks = orderedTasks.filter((task) => !isOverdue(task, now));
   const overdueTasks = orderedTasks.filter((task) => isOverdue(task, now));
 
   const counts: Record<TaskFilter, number> = {
-    all: team.tasks.length + team.history.length,
+    all: categoryTasks.length + categoryHistory.length,
     pending: pendingTasks.length,
     overdue: overdueTasks.length,
-    completed: team.history.length,
+    completed: categoryHistory.length,
   };
+
+  const categoryCounts = CATEGORIES.reduce(
+    (totals, category) => {
+      totals[category.id] =
+        team.tasks.filter((task) => task.category === category.id).length +
+        team.history.filter((entry) => entry.category === category.id).length;
+      return totals;
+    },
+    {
+      all: team.tasks.length + team.history.length,
+    } as Record<CategoryFilterValue, number>,
+  );
 
   const visibleTasks =
     filter === 'pending'
@@ -137,11 +166,13 @@ export default function TeamView({
         : 'No team tasks yet';
 
   const emptyMessage =
-    filter === 'pending'
-      ? 'No upcoming team tasks right now.'
-      : filter === 'overdue'
-        ? 'The team is on schedule.'
-        : 'Add the first shared task above and assign it to a teammate.';
+    categoryFilter !== 'all'
+      ? `No ${categoryLabel(categoryFilter).toLowerCase()} tasks here yet.`
+      : filter === 'pending'
+        ? 'No upcoming team tasks right now.'
+        : filter === 'overdue'
+          ? 'The team is on schedule.'
+          : 'Add the first shared task above and assign it to a teammate.';
 
   const showActivePanel = filter !== 'completed';
   const showHistoryPanel = filter === 'all' || filter === 'completed';
@@ -214,6 +245,12 @@ export default function TeamView({
 
           <FilterTabs value={filter} counts={counts} onChange={onFilterChange} />
 
+          <CategoryFilter
+            value={categoryFilter}
+            counts={categoryCounts}
+            onChange={setCategoryFilter}
+          />
+
           {showActivePanel && (
             <section className="panel" aria-labelledby="team-tasks-heading">
               <div className="panel-head">
@@ -229,8 +266,10 @@ export default function TeamView({
                 onDelete={onDeleteTask}
                 onAddComment={onAddComment}
                 onDeleteComment={onDeleteComment}
+                onCategoryChange={onCategoryChange}
                 canCompleteTask={canCompleteTask}
                 canDeleteTask={canDeleteTask}
+                canEditCategoryTask={canCompleteTask}
                 canDeleteComment={canDeleteComment}
                 emptyTitle={emptyTitle}
                 emptyMessage={emptyMessage}
@@ -246,9 +285,9 @@ export default function TeamView({
                 </h2>
                 <div className="head-actions">
                   <span className="count" aria-live="polite">
-                    {team.history.length}
+                    {categoryHistory.length}
                   </span>
-                  {isOwner && team.history.length > 0 && (
+                  {isOwner && categoryHistory.length > 0 && (
                     <button
                       type="button"
                       className="ghost-btn"
@@ -261,7 +300,7 @@ export default function TeamView({
               </div>
 
               <HistoryList
-                entries={team.history}
+                entries={categoryHistory}
                 onRestore={onRestoreTask}
                 canRestore={canRestoreTask}
               />

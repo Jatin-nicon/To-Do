@@ -1,4 +1,4 @@
-import type { AppState, Team, TeamsResponse, UserProfile } from './types';
+import type { AppState, Category, Team, TeamsResponse, UserProfile } from './types';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -74,10 +74,21 @@ export function getState(): Promise<AppState> {
   return request('/api/state');
 }
 
-export function addTask(text: string, dueAt: string | null): Promise<AppState> {
+export function addTask(
+  text: string,
+  dueAt: string | null,
+  category: Category,
+): Promise<AppState> {
   return request('/api/tasks', {
     method: 'POST',
-    body: JSON.stringify({ text, dueAt }),
+    body: JSON.stringify({ text, dueAt, category }),
+  });
+}
+
+export function updateTaskCategory(id: string, category: Category): Promise<AppState> {
+  return request(`/api/tasks/${encodeURIComponent(id)}/category`, {
+    method: 'PATCH',
+    body: JSON.stringify({ category }),
   });
 }
 
@@ -163,11 +174,26 @@ export function addTeamTask(
   text: string,
   dueAt: string | null,
   assigneeEmail: string,
+  category: Category,
 ): Promise<Team> {
   return request(`/api/teams/${encodeURIComponent(teamId)}/tasks`, {
     method: 'POST',
-    body: JSON.stringify({ text, dueAt, assigneeEmail }),
+    body: JSON.stringify({ text, dueAt, assigneeEmail, category }),
   });
+}
+
+export function updateTeamTaskCategory(
+  teamId: string,
+  taskId: string,
+  category: Category,
+): Promise<Team> {
+  return request(
+    `/api/teams/${encodeURIComponent(teamId)}/tasks/${encodeURIComponent(taskId)}/category`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ category }),
+    },
+  );
 }
 
 export function completeTeamTask(teamId: string, taskId: string): Promise<Team> {

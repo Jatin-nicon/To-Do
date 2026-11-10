@@ -229,6 +229,25 @@ export function UndoIcon({ size = 13 }: IconProps) {
   );
 }
 
+export function TagIcon({ size = 13 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12.6 3H4a1 1 0 0 0-1 1v8.6a2 2 0 0 0 .6 1.4l7.4 7.4a2 2 0 0 0 2.8 0l6.6-6.6a2 2 0 0 0 0-2.8L13.9 3.6a2 2 0 0 0-1.3-.6Z" />
+      <circle cx="7.5" cy="7.5" r="1.2" />
+    </svg>
+  );
+}
+
 export function SunIcon({ size = 15 }: IconProps) {
   return (
     <svg
