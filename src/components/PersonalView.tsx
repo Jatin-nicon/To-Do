@@ -31,6 +31,7 @@ interface PersonalViewProps {
     progress: number,
   ) => Promise<boolean>;
   onDeleteComment: (taskId: string, commentId: string) => void;
+  onRestore: (id: string) => void;
   onClearHistory: () => void;
 }
 
@@ -45,6 +46,7 @@ export default function PersonalView({
   onDelete,
   onAddComment,
   onDeleteComment,
+  onRestore,
   onClearHistory,
 }: PersonalViewProps) {
   const orderedTasks = [...state.tasks].sort(
@@ -145,7 +147,7 @@ export default function PersonalView({
               <span className="skeleton" />
             </div>
           ) : (
-            <HistoryList entries={state.history} />
+            <HistoryList entries={state.history} onRestore={onRestore} />
           )}
         </section>
       )}

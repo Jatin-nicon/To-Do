@@ -6,15 +6,17 @@ import {
   ChatIcon,
   CheckIcon,
   ChevronIcon,
+  UndoIcon,
   UserIcon,
   UsersIcon,
 } from './icons';
 
 interface HistoryItemProps {
   entry: HistoryEntry;
+  onRestore?: () => void;
 }
 
-export default function HistoryItem({ entry }: HistoryItemProps) {
+export default function HistoryItem({ entry, onRestore }: HistoryItemProps) {
   const [open, setOpen] = useState(false);
 
   const completed = formatDateTime(entry.completedAt);
@@ -70,6 +72,13 @@ export default function HistoryItem({ entry }: HistoryItemProps) {
         <span className="history-sub">
           Added {created ?? 'unknown'} · {entry.progress}% complete
         </span>
+
+        {onRestore && (
+          <button type="button" className="history-restore" onClick={onRestore}>
+            <UndoIcon />
+            Restore task
+          </button>
+        )}
 
         {entry.comments.length > 0 ? (
           <button

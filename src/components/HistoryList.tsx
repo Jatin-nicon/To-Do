@@ -3,9 +3,15 @@ import HistoryItem from './HistoryItem';
 
 interface HistoryListProps {
   entries: HistoryEntry[];
+  onRestore?: (id: string) => void;
+  canRestore?: (entry: HistoryEntry) => boolean;
 }
 
-export default function HistoryList({ entries }: HistoryListProps) {
+export default function HistoryList({
+  entries,
+  onRestore,
+  canRestore,
+}: HistoryListProps) {
   if (entries.length === 0) {
     return (
       <div className="empty small">
@@ -18,7 +24,15 @@ export default function HistoryList({ entries }: HistoryListProps) {
   return (
     <ul className="history-list">
       {entries.map((entry) => (
-        <HistoryItem key={entry.id} entry={entry} />
+        <HistoryItem
+          key={entry.id}
+          entry={entry}
+          onRestore={
+            onRestore && (!canRestore || canRestore(entry))
+              ? () => onRestore(entry.id)
+              : undefined
+          }
+        />
       ))}
     </ul>
   );

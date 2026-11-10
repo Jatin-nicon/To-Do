@@ -66,6 +66,7 @@ are protected with `scrypt` password hashes and signed session cookies.
 - Filters for **All**, **Pending**, **Overdue**, and **Completed**.
 - Completed tasks move into a full history with completion timestamps and all
   logged updates.
+- Restore a mistakenly completed task back to the active list.
 
 ### 👥 Team Collaboration
 - Create teams and invite members by email address.
@@ -259,6 +260,9 @@ that account inherits the previous personal tasks and team ownership.
   note.
 - Click the checkmark to complete a task. It moves to **Completed** with a
   timestamp and its full update log.
+- Click **Restore task** on a completed item to return it to the active list.
+  Progress is set back to the most recent update value (or 0 if there were no
+  progress updates).
 
 ### Teams
 1. Click **New team**, enter a name, and create it.
@@ -324,6 +328,7 @@ and invalid credentials return a generic `401` response.
 | `POST` | `/api/tasks/:id/comments` | Add an update (`{ text, progress }`) |
 | `DELETE` | `/api/tasks/:id/comments/:commentId` | Delete an update |
 | `DELETE` | `/api/tasks/:id` | Delete an active task |
+| `POST` | `/api/history/:id/restore` | Restore a completed task to the active list |
 | `DELETE` | `/api/history` | Clear completed history |
 
 ### Teams & Shared Tasks
@@ -340,6 +345,7 @@ and invalid credentials return a generic `401` response.
 | `POST` | `/api/teams/:id/tasks/:taskId/comments` | Add an update to a shared task |
 | `DELETE` | `/api/teams/:id/tasks/:taskId/comments/:id` | Delete a shared task update |
 | `DELETE` | `/api/teams/:id/tasks/:taskId` | Delete a shared task |
+| `POST` | `/api/teams/:id/history/:entryId/restore` | Restore a completed shared task |
 | `DELETE` | `/api/teams/:id/history` | Clear team history (owner only) |
 
 ---

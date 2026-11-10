@@ -386,6 +386,13 @@ export default function App() {
     [runAction],
   );
 
+  const handleRestore = useCallback(
+    (id: string) => {
+      void runAction(() => api.restoreTask(id));
+    },
+    [runAction],
+  );
+
   const handleDelete = useCallback(
     (id: string) => {
       void runAction(() => api.deleteTask(id));
@@ -428,6 +435,13 @@ export default function App() {
   const handleTeamComplete = useCallback(
     (id: string) => {
       void runTeamAction((teamId) => api.completeTeamTask(teamId, id));
+    },
+    [runTeamAction],
+  );
+
+  const handleTeamRestore = useCallback(
+    (id: string) => {
+      void runTeamAction((teamId) => api.restoreTeamTask(teamId, id));
     },
     [runTeamAction],
   );
@@ -680,6 +694,7 @@ export default function App() {
               onDelete={handleDelete}
               onAddComment={handleAddComment}
               onDeleteComment={handleDeleteComment}
+              onRestore={handleRestore}
               onClearHistory={handleClearHistory}
             />
           ) : team ? (
@@ -695,6 +710,7 @@ export default function App() {
               onRefresh={handleRefreshTeam}
               onAddTask={handleTeamAdd}
               onCompleteTask={handleTeamComplete}
+              onRestoreTask={handleTeamRestore}
               onDeleteTask={handleTeamDeleteTask}
               onAddComment={handleTeamAddComment}
               onDeleteComment={handleTeamDeleteComment}

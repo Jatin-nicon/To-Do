@@ -41,6 +41,7 @@ interface TeamViewProps {
     assigneeEmail: string,
   ) => Promise<boolean>;
   onCompleteTask: (id: string) => void;
+  onRestoreTask: (id: string) => void;
   onDeleteTask: (id: string) => void;
   onAddComment: (
     taskId: string,
@@ -66,6 +67,7 @@ export default function TeamView({
   onRefresh,
   onAddTask,
   onCompleteTask,
+  onRestoreTask,
   onDeleteTask,
   onAddComment,
   onDeleteComment,
@@ -90,6 +92,10 @@ export default function TeamView({
 
   function canCompleteTask(task: Task): boolean {
     return isOwner || isSamePerson(task.author) || isSamePerson(task.assignee);
+  }
+
+  function canRestoreTask(entry: Task): boolean {
+    return isOwner || isSamePerson(entry.author) || isSamePerson(entry.assignee);
   }
 
   function canDeleteTask(task: Task): boolean {
@@ -254,13 +260,17 @@ export default function TeamView({
                 </div>
               </div>
 
-              <HistoryList entries={team.history} />
+              <HistoryList
+                entries={team.history}
+                onRestore={onRestoreTask}
+                canRestore={canRestoreTask}
+              />
             </section>
           )}
 
           <p className="team-hint">
             Everyone on this team can see these tasks and post progress updates. Only the
-            task owner, its assignee, or the team owner can complete a task.
+            task owner, its assignee, or the team owner can complete or restore a task.
           </p>
         </>
       )}

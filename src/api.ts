@@ -87,6 +87,12 @@ export function completeTask(id: string): Promise<AppState> {
   });
 }
 
+export function restoreTask(id: string): Promise<AppState> {
+  return request(`/api/history/${encodeURIComponent(id)}/restore`, {
+    method: 'POST',
+  });
+}
+
 export function deleteTask(id: string): Promise<AppState> {
   return request(`/api/tasks/${encodeURIComponent(id)}`, {
     method: 'DELETE',
@@ -167,6 +173,13 @@ export function addTeamTask(
 export function completeTeamTask(teamId: string, taskId: string): Promise<Team> {
   return request(
     `/api/teams/${encodeURIComponent(teamId)}/tasks/${encodeURIComponent(taskId)}/complete`,
+    { method: 'POST' },
+  );
+}
+
+export function restoreTeamTask(teamId: string, entryId: string): Promise<Team> {
+  return request(
+    `/api/teams/${encodeURIComponent(teamId)}/history/${encodeURIComponent(entryId)}/restore`,
     { method: 'POST' },
   );
 }

@@ -1069,6 +1069,19 @@ function canCompleteTeamTask(team: Team, task: TeamTask, user: UserProfile): boo
   );
 }
 
+function progressBeforeCompletion(entry: HistoryEntry): number {
+  const latest = entry.comments.find((comment) => comment.progress !== null);
+  return latest?.progress ?? 0;
+}
+
+function activeTaskFromHistory<T extends HistoryEntry>(
+  entry: T,
+): Omit<T, 'completedAt'> {
+  const { completedAt, ...task } = entry;
+  void completedAt;
+  return task;
+}
+
 function canDeleteTeamTask(team: Team, task: TeamTask, user: UserProfile): boolean {
   return teamRole(team, user) === 'owner' || isSamePerson(task.author, user);
 }
@@ -1759,6 +1772,39 @@ api.delete(
   }),
 );
 
+api.post(
+  '/teams/:id/history/:entryId/restore',
+  asyncHandler(async (req, res, next) => {
+    const team = await requireTeamMember(req, res);
+    if (!team) return;
+
+    const user = getAuthUser(req);
+    const entry = team.history.find((item) => item.id === req.params.entryId);
+
+    if (!entry) {
+      res.status(404).json({ error: 'Completed task not found.' });
+      return;
+    }
+
+    if (!canCompleteTeamTask(team, entry, user)) {
+      res.status(403).json({
+        error: 'Only the task owner, its assignee, or the team owner can restore it.',
+      });
+      return;
+    }
+
+    commitTeam(team, res, next, (current) => {
+      const index = current.history.findIndex((item) => item.id === entry.id);
+      if (index === -1) return;
+      const [completed] = current.history.splice(index, 1);
+      current.tasks.unshift({
+        ...activeTaskFromHistory(completed),
+        progress: progressBeforeCompletion(completed),
+      });
+    });
+  }),
+);
+
 api.delete(
   '/teams/:id/history',
   asyncHandler(async (req, res, next) => {
@@ -1898,6 +1944,24 @@ api.delete('/tasks/:id', (req, res, next) => {
 
   commit(req, res, next, () => {
     database.tasks.splice(index, 1);
+  });
+});
+
+api.post('/history/:id/restore', (req, res, next) => {
+  const database = getUserDatabase(req);
+  const index = database.history.findIndex((entry) => entry.id === req.params.id);
+
+  if (index === -1) {
+    res.status(404).json({ error: 'Completed task not found.' });
+    return;
+  }
+
+  commit(req, res, next, () => {
+    const [completed] = database.history.splice(index, 1);
+    database.tasks.unshift({
+      ...activeTaskFromHistory(completed),
+      progress: progressBeforeCompletion(completed),
+    });
   });
 });
 
