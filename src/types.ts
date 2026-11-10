@@ -12,6 +12,15 @@ export interface TaskComment {
   author?: PersonRef | null;
 }
 
+export type Category =
+  | 'general'
+  | 'work'
+  | 'personal'
+  | 'study'
+  | 'health'
+  | 'shopping'
+  | 'errands';
+
 export interface Task {
   id: string;
   text: string;
@@ -19,6 +28,7 @@ export interface Task {
   dueAt: string | null;
   progress: number;
   comments: TaskComment[];
+  category: Category;
   author?: PersonRef | null;
   assignee?: PersonRef | null;
 }

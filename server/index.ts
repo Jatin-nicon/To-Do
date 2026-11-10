@@ -30,6 +30,25 @@ interface TaskComment {
   author?: PersonRef | null;
 }
 
+type Category =
+  | 'general'
+  | 'work'
+  | 'personal'
+  | 'study'
+  | 'health'
+  | 'shopping'
+  | 'errands';
+
+const categoryIds: readonly Category[] = [
+  'general',
+  'work',
+  'personal',
+  'study',
+  'health',
+  'shopping',
+  'errands',
+];
+
 interface Task {
   id: string;
   text: string;
@@ -37,6 +56,7 @@ interface Task {
   dueAt: string | null;
   progress: number;
   comments: TaskComment[];
+  category: Category;
 }
 
 interface HistoryEntry extends Task {
@@ -183,6 +203,18 @@ function parseDueAt(value: unknown): string | null | undefined {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return undefined;
   return date.toISOString();
+}
+
+function normalizeCategory(value: unknown): Category {
+  return typeof value === 'string' && categoryIds.includes(value as Category)
+    ? (value as Category)
+    : 'general';
+}
+
+function parseCategory(value: unknown): Category | undefined {
+  if (value === undefined || value === null || value === '') return 'general';
+  if (typeof value !== 'string') return undefined;
+  return categoryIds.includes(value as Category) ? (value as Category) : undefined;
 }
 
 function normalizeEmail(value: unknown): string | null {
@@ -606,6 +638,7 @@ function normalizeTask(value: unknown): Task | null {
     dueAt: dueAt ?? null,
     progress,
     comments,
+    category: normalizeCategory(value.category),
   };
 }
 
@@ -1574,10 +1607,11 @@ api.post(
 
     const user = getAuthUser(req);
     const body = req.body as
-      | { text?: unknown; dueAt?: unknown; assigneeEmail?: unknown }
+      | { text?: unknown; dueAt?: unknown; assigneeEmail?: unknown; category?: unknown }
       | undefined;
     const text = parseTaskText(body?.text);
     const dueAt = parseDueAt(body?.dueAt);
+    const category = parseCategory(body?.category);
 
     if (!text) {
       res.status(400).json({
@@ -1588,6 +1622,11 @@ api.post(
 
     if (dueAt === undefined) {
       res.status(400).json({ error: 'Deadline is not a valid date.' });
+      return;
+    }
+
+    if (category === undefined) {
+      res.status(400).json({ error: 'Choose a valid category.' });
       return;
     }
 
@@ -1617,6 +1656,7 @@ api.post(
         dueAt,
         progress: 0,
         comments: [],
+        category,
         author: personRefForUser(user),
         assignee,
       });
@@ -1654,6 +1694,43 @@ api.post(
         progress: 100,
         completedAt: new Date().toISOString(),
       });
+    });
+  }),
+);
+
+api.patch(
+  '/teams/:id/tasks/:taskId/category',
+  asyncHandler(async (req, res, next) => {
+    const team = await requireTeamMember(req, res);
+    if (!team) return;
+
+    const user = getAuthUser(req);
+    const task = team.tasks.find((entry) => entry.id === req.params.taskId);
+
+    if (!task) {
+      res.status(404).json({ error: 'Task not found.' });
+      return;
+    }
+
+    if (!canCompleteTeamTask(team, task, user)) {
+      res.status(403).json({
+        error:
+          'Only the task owner, its assignee, or the team owner can change its category.',
+      });
+      return;
+    }
+
+    const body = req.body as { category?: unknown } | undefined;
+    const category = parseCategory(body?.category);
+
+    if (category === undefined) {
+      res.status(400).json({ error: 'Choose a valid category.' });
+      return;
+    }
+
+    commitTeam(team, res, next, (current) => {
+      const target = current.tasks.find((entry) => entry.id === task.id);
+      if (target) target.category = category;
     });
   }),
 );
@@ -1819,9 +1896,12 @@ api.delete(
 
 api.post('/tasks', (req, res, next) => {
   const database = getUserDatabase(req);
-  const body = req.body as { text?: unknown; dueAt?: unknown } | undefined;
+  const body = req.body as
+    | { text?: unknown; dueAt?: unknown; category?: unknown }
+    | undefined;
   const text = parseTaskText(body?.text);
   const dueAt = parseDueAt(body?.dueAt);
+  const category = parseCategory(body?.category);
 
   if (!text) {
     res.status(400).json({
@@ -1835,6 +1915,11 @@ api.post('/tasks', (req, res, next) => {
     return;
   }
 
+  if (category === undefined) {
+    res.status(400).json({ error: 'Choose a valid category.' });
+    return;
+  }
+
   commit(req, res, next, () => {
     database.tasks.unshift({
       id: randomUUID(),
@@ -1843,6 +1928,7 @@ api.post('/tasks', (req, res, next) => {
       dueAt,
       progress: 0,
       comments: [],
+      category,
     });
   });
 });
@@ -1865,6 +1951,28 @@ api.post('/tasks/:id/complete', (req, res, next) => {
       progress: 100,
       completedAt: new Date().toISOString(),
     });
+  });
+});
+
+api.patch('/tasks/:id/category', (req, res, next) => {
+  const database = getUserDatabase(req);
+  const task = database.tasks.find((entry) => entry.id === req.params.id);
+
+  if (!task) {
+    res.status(404).json({ error: 'Task not found.' });
+    return;
+  }
+
+  const body = req.body as { category?: unknown } | undefined;
+  const category = parseCategory(body?.category);
+
+  if (category === undefined) {
+    res.status(400).json({ error: 'Choose a valid category.' });
+    return;
+  }
+
+  commit(req, res, next, () => {
+    task.category = category;
   });
 });
 

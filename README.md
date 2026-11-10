@@ -62,6 +62,8 @@ are protected with `scrypt` password hashes and signed session cookies.
 ### 📝 Personal Workspace
 - Private task list with optional date and time deadlines.
 - Dynamic deadline states: upcoming, due today, and overdue.
+- Colour-coded categories (General, Work, Personal, Study, Health, Shopping,
+  Errands) with a one-click category filter.
 - Progress slider (0–100%) with optional notes on every update.
 - Filters for **All**, **Pending**, **Overdue**, and **Completed**.
 - Completed tasks move into a full history with completion timestamps and all
@@ -251,9 +253,20 @@ that account inherits the previous personal tasks and team ownership.
 
 ### Personal tasks
 1. Open **My Tasks** in the sidebar.
-2. Type a task and optionally choose a deadline.
+2. Type a task, optionally choose a deadline, and pick a category.
 3. Press **Enter** or click **+** to add it.
 4. Use the filter tabs to focus on pending, overdue, or completed work.
+5. Use the category chips to show only one category at a time.
+
+### Categories
+- Every task belongs to one of seven categories: **General**, **Work**,
+  **Personal**, **Study**, **Health**, **Shopping**, or **Errands**.
+- Pick a category in the add-task form; click the coloured category chip on an
+  active task to move it to another category.
+- The category filter above the list narrows the active and completed lists at
+  the same time. **All categories** clears the filter.
+- Categories are preserved when a task is completed, restored, or shared with a
+  team.
 
 ### Progress and history
 - Click **Add update** on a task, drag the progress slider, and add an optional
@@ -323,7 +336,8 @@ and invalid credentials return a generic `401` response.
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/state` | Get active tasks and completed history |
-| `POST` | `/api/tasks` | Create a task (`{ text, dueAt }`) |
+| `POST` | `/api/tasks` | Create a task (`{ text, dueAt, category }`) |
+| `PATCH` | `/api/tasks/:id/category` | Change a task's category (`{ category }`) |
 | `POST` | `/api/tasks/:id/complete` | Complete a task |
 | `POST` | `/api/tasks/:id/comments` | Add an update (`{ text, progress }`) |
 | `DELETE` | `/api/tasks/:id/comments/:commentId` | Delete an update |
@@ -340,7 +354,8 @@ and invalid credentials return a generic `401` response.
 | `DELETE` | `/api/teams/:id` | Delete a team (owner only) |
 | `POST` | `/api/teams/:id/members` | Invite a member (`{ email }`) |
 | `DELETE` | `/api/teams/:id/members/:email` | Remove a member or leave |
-| `POST` | `/api/teams/:id/tasks` | Add a shared task (`{ text, dueAt, assigneeEmail }`) |
+| `POST` | `/api/teams/:id/tasks` | Add a shared task (`{ text, dueAt, assigneeEmail, category }`) |
+| `PATCH` | `/api/teams/:id/tasks/:taskId/category` | Change a shared task's category (`{ category }`) |
 | `POST` | `/api/teams/:id/tasks/:taskId/complete` | Complete a shared task |
 | `POST` | `/api/teams/:id/tasks/:taskId/comments` | Add an update to a shared task |
 | `DELETE` | `/api/teams/:id/tasks/:taskId/comments/:id` | Delete a shared task update |

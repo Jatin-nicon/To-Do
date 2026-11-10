@@ -1,4 +1,8 @@
-import type { AppState, Task, TaskFilter } from '../types';
+import { useState } from 'react';
+import { CATEGORIES, categoryLabel } from '../categories';
+import type { AppState, Category, Task, TaskFilter } from '../types';
+import CategoryFilter from './CategoryFilter';
+import type { CategoryFilterValue } from './CategoryFilter';
 import FilterTabs from './FilterTabs';
 import HistoryList from './HistoryList';
 import TaskForm from './TaskForm';
@@ -22,9 +26,10 @@ interface PersonalViewProps {
   filter: TaskFilter;
   now: number;
   onFilterChange: (filter: TaskFilter) => void;
-  onAdd: (text: string, dueAt: string | null) => Promise<boolean>;
+  onAdd: (text: string, dueAt: string | null, category: Category) => Promise<boolean>;
   onComplete: (id: string) => void;
   onDelete: (id: string) => void;
+  onCategoryChange: (id: string, category: Category) => void;
   onAddComment: (
     taskId: string,
     text: string,
@@ -44,12 +49,22 @@ export default function PersonalView({
   onAdd,
   onComplete,
   onDelete,
+  onCategoryChange,
   onAddComment,
   onDeleteComment,
   onRestore,
   onClearHistory,
 }: PersonalViewProps) {
-  const orderedTasks = [...state.tasks].sort(
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilterValue>('all');
+
+  const categoryTasks = state.tasks.filter(
+    (task) => categoryFilter === 'all' || task.category === categoryFilter,
+  );
+  const categoryHistory = state.history.filter(
+    (entry) => categoryFilter === 'all' || entry.category === categoryFilter,
+  );
+
+  const orderedTasks = [...categoryTasks].sort(
     (first, second) => deadlineValue(first) - deadlineValue(second),
   );
 
@@ -57,11 +72,23 @@ export default function PersonalView({
   const overdueTasks = orderedTasks.filter((task) => isOverdue(task, now));
 
   const counts: Record<TaskFilter, number> = {
-    all: state.tasks.length + state.history.length,
+    all: categoryTasks.length + categoryHistory.length,
     pending: pendingTasks.length,
     overdue: overdueTasks.length,
-    completed: state.history.length,
+    completed: categoryHistory.length,
   };
+
+  const categoryCounts = CATEGORIES.reduce(
+    (totals, category) => {
+      totals[category.id] =
+        state.tasks.filter((task) => task.category === category.id).length +
+        state.history.filter((entry) => entry.category === category.id).length;
+      return totals;
+    },
+    {
+      all: state.tasks.length + state.history.length,
+    } as Record<CategoryFilterValue, number>,
+  );
 
   const visibleTasks =
     filter === 'pending'
@@ -81,11 +108,13 @@ export default function PersonalView({
         : 'All clear';
 
   const emptyMessage =
-    filter === 'pending'
-      ? 'No upcoming tasks right now.'
-      : filter === 'overdue'
-        ? "You're on schedule."
-        : 'Add your first task above.';
+    categoryFilter !== 'all'
+      ? `No ${categoryLabel(categoryFilter).toLowerCase()} tasks here yet.`
+      : filter === 'pending'
+        ? 'No upcoming tasks right now.'
+        : filter === 'overdue'
+          ? "You're on schedule."
+          : 'Add your first task above.';
 
   const showActivePanel = filter !== 'completed';
   const showHistoryPanel = filter === 'all' || filter === 'completed';
@@ -95,6 +124,12 @@ export default function PersonalView({
       <TaskForm onAdd={onAdd} />
 
       <FilterTabs value={filter} counts={counts} onChange={onFilterChange} />
+
+      <CategoryFilter
+        value={categoryFilter}
+        counts={categoryCounts}
+        onChange={setCategoryFilter}
+      />
 
       {showActivePanel && (
         <section className="panel" aria-labelledby="tasks-heading">
@@ -117,6 +152,7 @@ export default function PersonalView({
               onDelete={onDelete}
               onAddComment={onAddComment}
               onDeleteComment={onDeleteComment}
+              onCategoryChange={onCategoryChange}
               emptyTitle={emptyTitle}
               emptyMessage={emptyMessage}
             />
@@ -132,9 +168,9 @@ export default function PersonalView({
             </h2>
             <div className="head-actions">
               <span className="count" aria-live="polite">
-                {state.history.length}
+                {categoryHistory.length}
               </span>
-              {state.history.length > 0 && (
+              {categoryHistory.length > 0 && (
                 <button type="button" className="ghost-btn" onClick={onClearHistory}>
                   Clear
                 </button>
@@ -147,7 +183,7 @@ export default function PersonalView({
               <span className="skeleton" />
             </div>
           ) : (
-            <HistoryList entries={state.history} onRestore={onRestore} />
+            <HistoryList entries={categoryHistory} onRestore={onRestore} />
           )}
         </section>
       )}

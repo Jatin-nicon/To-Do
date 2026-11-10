@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import type { Task, TaskComment } from '../types';
+import { CATEGORIES, categoryLabel } from '../categories';
+import type { Category, Task, TaskComment } from '../types';
 import { commentDateFormatter } from '../format';
 import {
   CalendarIcon,
@@ -76,8 +77,10 @@ interface TaskItemProps {
   onDelete: (id: string) => void;
   onAddComment: (taskId: string, text: string, progress: number) => Promise<boolean>;
   onDeleteComment: (taskId: string, commentId: string) => void;
+  onCategoryChange?: (id: string, category: Category) => void;
   canComplete?: boolean;
   canDelete?: boolean;
+  canEditCategory?: boolean;
   canDeleteComment?: (comment: TaskComment) => boolean;
 }
 
@@ -87,8 +90,10 @@ export default function TaskItem({
   onDelete,
   onAddComment,
   onDeleteComment,
+  onCategoryChange,
   canComplete = true,
   canDelete = true,
+  canEditCategory = true,
   canDeleteComment,
 }: TaskItemProps) {
   const [open, setOpen] = useState(false);
@@ -143,30 +148,50 @@ export default function TaskItem({
         <div className="task-content">
           <span className="task-text">{task.text}</span>
 
-          {(due || author || assignee) && (
-            <div className="task-meta">
-              {due && (
-                <span className={`due ${due.tone}`}>
-                  <CalendarIcon />
-                  {due.label}
-                </span>
-              )}
+          <div className="task-meta">
+            {onCategoryChange && canEditCategory ? (
+              <select
+                className={`category-select cat-${task.category}`}
+                value={task.category}
+                aria-label={`Category for ${task.text}`}
+                title={`Category: ${categoryLabel(task.category)}`}
+                onChange={(event) =>
+                  onCategoryChange(task.id, event.target.value as Category)
+                }
+              >
+                {CATEGORIES.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className={`category-chip cat-${task.category}`}>
+                {categoryLabel(task.category)}
+              </span>
+            )}
 
-              {author && (
-                <span className="person-chip" title={`Added by ${author.email}`}>
-                  <UserIcon />
-                  {author.name}
-                </span>
-              )}
+            {due && (
+              <span className={`due ${due.tone}`}>
+                <CalendarIcon />
+                {due.label}
+              </span>
+            )}
 
-              {assignee && (
-                <span className="person-chip assignee" title={`Assigned to ${assignee.email}`}>
-                  <UsersIcon />
-                  {assignee.name}
-                </span>
-              )}
-            </div>
-          )}
+            {author && (
+              <span className="person-chip" title={`Added by ${author.email}`}>
+                <UserIcon />
+                {author.name}
+              </span>
+            )}
+
+            {assignee && (
+              <span className="person-chip assignee" title={`Assigned to ${assignee.email}`}>
+                <UsersIcon />
+                {assignee.name}
+              </span>
+            )}
+          </div>
 
           {hasProgress && (
             <div className="progress-row">

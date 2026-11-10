@@ -9,6 +9,7 @@ import ThemeToggle from './components/ThemeToggle';
 import { applyTheme, getInitialTheme } from './theme';
 import type {
   AppState,
+  Category,
   TaskFilter,
   Team,
   TeamRole,
@@ -375,7 +376,8 @@ export default function App() {
   );
 
   const handleAdd = useCallback(
-    (text: string, dueAt: string | null) => runAction(() => api.addTask(text, dueAt)),
+    (text: string, dueAt: string | null, category: Category) =>
+      runAction(() => api.addTask(text, dueAt, category)),
     [runAction],
   );
 
@@ -396,6 +398,13 @@ export default function App() {
   const handleDelete = useCallback(
     (id: string) => {
       void runAction(() => api.deleteTask(id));
+    },
+    [runAction],
+  );
+
+  const handleCategoryChange = useCallback(
+    (id: string, category: Category) => {
+      void runAction(() => api.updateTaskCategory(id, category));
     },
     [runAction],
   );
@@ -427,8 +436,10 @@ export default function App() {
   }, [runAction, state.history.length]);
 
   const handleTeamAdd = useCallback(
-    (text: string, dueAt: string | null, assigneeEmail: string) =>
-      runTeamAction((teamId) => api.addTeamTask(teamId, text, dueAt, assigneeEmail)),
+    (text: string, dueAt: string | null, assigneeEmail: string, category: Category) =>
+      runTeamAction((teamId) =>
+        api.addTeamTask(teamId, text, dueAt, assigneeEmail, category),
+      ),
     [runTeamAction],
   );
 
@@ -449,6 +460,15 @@ export default function App() {
   const handleTeamDeleteTask = useCallback(
     (id: string) => {
       void runTeamAction((teamId) => api.deleteTeamTask(teamId, id));
+    },
+    [runTeamAction],
+  );
+
+  const handleTeamCategoryChange = useCallback(
+    (id: string, category: Category) => {
+      void runTeamAction((teamId) =>
+        api.updateTeamTaskCategory(teamId, id, category),
+      );
     },
     [runTeamAction],
   );
@@ -692,6 +712,7 @@ export default function App() {
               onAdd={handleAdd}
               onComplete={handleComplete}
               onDelete={handleDelete}
+              onCategoryChange={handleCategoryChange}
               onAddComment={handleAddComment}
               onDeleteComment={handleDeleteComment}
               onRestore={handleRestore}
@@ -712,6 +733,7 @@ export default function App() {
               onCompleteTask={handleTeamComplete}
               onRestoreTask={handleTeamRestore}
               onDeleteTask={handleTeamDeleteTask}
+              onCategoryChange={handleTeamCategoryChange}
               onAddComment={handleTeamAddComment}
               onDeleteComment={handleTeamDeleteComment}
               onClearHistory={handleTeamClearHistory}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { categoryLabel } from '../categories';
 import type { HistoryEntry } from '../types';
 import { commentDateFormatter, formatDateTime } from '../format';
 import {
@@ -6,6 +7,7 @@ import {
   ChatIcon,
   CheckIcon,
   ChevronIcon,
+  TagIcon,
   UndoIcon,
   UserIcon,
   UsersIcon,
@@ -44,6 +46,10 @@ export default function HistoryItem({ entry, onRestore }: HistoryItemProps) {
         </span>
 
         <div className="history-meta">
+          <span className={`category-chip cat-${entry.category}`}>
+            <TagIcon size={11} />
+            {categoryLabel(entry.category)}
+          </span>
           {deadline && (
             <span className="history-chip">
               <CalendarIcon />
