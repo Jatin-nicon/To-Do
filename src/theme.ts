@@ -4,7 +4,7 @@ export const themeStorageKey = 'todo-theme';
 
 const themeColor: Record<Theme, string> = {
   light: '#f4f5fa',
-  dark: '#0d1020',
+  dark: '#171614',
 };
 
 export function getInitialTheme(): Theme {
