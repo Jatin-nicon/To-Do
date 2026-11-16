@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { categoryLabel } from '../categories';
+import { CATEGORIES, categoryLabel } from '../categories';
 import type { Category, Task, TaskComment } from '../types';
 import { commentDateFormatter } from '../format';
-import CategorySelect from './CategorySelect';
 import {
   CalendarIcon,
   ChatIcon,
@@ -151,11 +150,21 @@ export default function TaskItem({
 
           <div className="task-meta">
             {onCategoryChange && canEditCategory ? (
-              <CategorySelect
+              <select
+                className={`category-select cat-${task.category}`}
                 value={task.category}
-                ariaLabel={`Category for ${task.text}`}
-                onChange={(category) => onCategoryChange(task.id, category)}
-              />
+                aria-label={`Category for ${task.text}`}
+                title={`Category: ${categoryLabel(task.category)}`}
+                onChange={(event) =>
+                  onCategoryChange(task.id, event.target.value as Category)
+                }
+              >
+                {CATEGORIES.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             ) : (
               <span className={`category-chip cat-${task.category}`}>
                 {categoryLabel(task.category)}
