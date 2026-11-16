@@ -1,7 +1,8 @@
 import { useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import { CATEGORIES, DEFAULT_CATEGORY } from '../categories';
+import { DEFAULT_CATEGORY } from '../categories';
 import type { Category } from '../types';
+import CategorySelect from './CategorySelect';
 import { CalendarIcon, PlusIcon, TagIcon } from './icons';
 
 interface TaskFormProps {
@@ -96,19 +97,13 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
             <TagIcon />
             Category
           </label>
-          <select
+          <CategorySelect
             id={categoryId}
-            className={`category-picker cat-${category}`}
+            variant="picker"
             value={category}
-            onChange={(event) => setCategory(event.target.value as Category)}
+            onChange={setCategory}
             disabled={submitting}
-          >
-            {CATEGORIES.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
     </form>
