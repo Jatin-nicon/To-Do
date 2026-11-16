@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { TeamSummary, WorkspaceView } from '../types';
-import { ListIcon, PlusIcon, TeamIcon, UsersIcon } from './icons';
+import { CloseIcon, ListIcon, PlusIcon, TeamIcon, UsersIcon } from './icons';
 
 function initials(name: string): string {
   const parts = name
@@ -19,9 +19,11 @@ interface SidebarProps {
   view: WorkspaceView;
   personalCount: number;
   loading: boolean;
+  open: boolean;
   onCreateTeam: (name: string) => Promise<boolean>;
   onSelectPersonal: () => void;
   onSelectTeam: (id: string) => void;
+  onClose: () => void;
 }
 
 export default function Sidebar({
@@ -29,13 +31,34 @@ export default function Sidebar({
   view,
   personalCount,
   loading,
+  open,
   onCreateTeam,
   onSelectPersonal,
   onSelectTeam,
+  onClose,
 }: SidebarProps) {
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Move focus into the drawer when it opens so keyboard users land inside it.
+  useEffect(() => {
+    if (!open) return;
+
+    let innerFrame = 0;
+    // Two frames let the drawer paint before it accepts focus.
+    const outerFrame = window.requestAnimationFrame(() => {
+      innerFrame = window.requestAnimationFrame(() => {
+        closeButtonRef.current?.focus({ preventScroll: true });
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(outerFrame);
+      if (innerFrame) window.cancelAnimationFrame(innerFrame);
+    };
+  }, [open]);
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,7 +76,24 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="sidebar" aria-label="Workspace navigation">
+    <aside
+      id="workspace-sidebar"
+      className={`sidebar${open ? ' is-open' : ''}`}
+      aria-label="Workspace navigation"
+    >
+      <div className="sidebar-mobile-head">
+        <span className="sidebar-mobile-title">Workspace</span>
+        <button
+          type="button"
+          className="sidebar-close"
+          ref={closeButtonRef}
+          onClick={onClose}
+          aria-label="Close navigation menu"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+
       <div className="sidebar-section">
         <span className="sidebar-label">Workspace</span>
         <button

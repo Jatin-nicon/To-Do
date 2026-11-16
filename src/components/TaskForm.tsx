@@ -68,44 +68,48 @@ export default function TaskForm({ onAdd }: TaskFormProps) {
       </div>
 
       <div className="deadline-row">
-        <label className="deadline-label" htmlFor={deadlineId}>
-          <CalendarIcon />
-          Deadline
-        </label>
-        <input
-          id={deadlineId}
-          type="datetime-local"
-          value={dueAt}
-          onChange={(event) => setDueAt(event.target.value)}
-          aria-label="Task deadline (optional)"
-        />
-        {dueAt && (
-          <button
-            type="button"
-            className="clear-deadline"
-            onClick={() => setDueAt('')}
-          >
-            Clear
-          </button>
-        )}
+        <div className="deadline-field">
+          <label className="deadline-label" htmlFor={deadlineId}>
+            <CalendarIcon />
+            Deadline
+          </label>
+          <input
+            id={deadlineId}
+            type="datetime-local"
+            value={dueAt}
+            onChange={(event) => setDueAt(event.target.value)}
+            aria-label="Task deadline (optional)"
+          />
+          {dueAt && (
+            <button
+              type="button"
+              className="clear-deadline"
+              onClick={() => setDueAt('')}
+            >
+              Clear
+            </button>
+          )}
+        </div>
 
-        <label className="deadline-label category-label" htmlFor={categoryId}>
-          <TagIcon />
-          Category
-        </label>
-        <select
-          id={categoryId}
-          className={`category-picker cat-${category}`}
-          value={category}
-          onChange={(event) => setCategory(event.target.value as Category)}
-          disabled={submitting}
-        >
-          {CATEGORIES.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <div className="deadline-field">
+          <label className="deadline-label category-label" htmlFor={categoryId}>
+            <TagIcon />
+            Category
+          </label>
+          <select
+            id={categoryId}
+            className={`category-picker cat-${category}`}
+            value={category}
+            onChange={(event) => setCategory(event.target.value as Category)}
+            disabled={submitting}
+          >
+            {CATEGORIES.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </form>
   );

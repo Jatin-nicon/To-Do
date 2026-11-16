@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
-import { CheckIcon, LogOutIcon } from './components/icons';
+import { CheckIcon, LogOutIcon, MenuIcon } from './components/icons';
 import LoginScreen from './components/LoginScreen';
 import PersonalView from './components/PersonalView';
 import Sidebar from './components/Sidebar';
@@ -55,6 +55,7 @@ export default function App() {
   const [teams, setTeams] = useState<TeamSummary[]>([]);
   const [teamsLoading, setTeamsLoading] = useState(false);
   const [view, setView] = useState<WorkspaceView>({ kind: 'personal' });
+  const [navOpen, setNavOpen] = useState(false);
   const [team, setTeam] = useState<Team | null>(null);
   const [teamLoading, setTeamLoading] = useState(false);
   const [teamFilter, setTeamFilter] = useState<TaskFilter>('all');
@@ -63,6 +64,8 @@ export default function App() {
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const teamQueue = useRef<Promise<unknown>>(Promise.resolve());
   const teamRequest = useRef(0);
+  const navToggleRef = useRef<HTMLButtonElement>(null);
+  const previousNavOpen = useRef(false);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000);
@@ -72,6 +75,53 @@ export default function App() {
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
+
+  // Close the mobile navigation drawer whenever the active workspace changes.
+  useEffect(() => {
+    setNavOpen(false);
+  }, [view]);
+
+  // While the drawer is open, lock the page behind it and allow Escape to close.
+  useEffect(() => {
+    if (!navOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setNavOpen(false);
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navOpen]);
+
+  // The drawer only exists on small screens; close it if the window grows.
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 861px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setNavOpen(false);
+    };
+
+    media.addEventListener('change', handleChange);
+    return () => media.removeEventListener('change', handleChange);
+  }, []);
+
+  // Return focus to the menu button when the drawer closes.
+  useEffect(() => {
+    if (navOpen) {
+      previousNavOpen.current = true;
+      return;
+    }
+
+    if (previousNavOpen.current) {
+      previousNavOpen.current = false;
+      navToggleRef.current?.focus();
+    }
+  }, [navOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -633,14 +683,28 @@ export default function App() {
 
   return (
     <main className="app">
-      <header className="app-header">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            <CheckIcon size={16} />
-          </span>
-          <div>
-            <h1>My Tasks</h1>
-            <p className="subtitle">Personal focus, shared progress.</p>
+      <header className="app-header" inert={navOpen}>
+        <div className="header-left">
+          <button
+            type="button"
+            className="nav-toggle"
+            ref={navToggleRef}
+            aria-label={navOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={navOpen}
+            aria-controls="workspace-sidebar"
+            onClick={() => setNavOpen((current) => !current)}
+          >
+            <MenuIcon />
+          </button>
+
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true">
+              <CheckIcon size={16} />
+            </span>
+            <div>
+              <h1>My Tasks</h1>
+              <p className="subtitle">Personal focus, shared progress.</p>
+            </div>
           </div>
         </div>
 
@@ -690,18 +754,26 @@ export default function App() {
         </div>
       )}
 
-      <div className="workspace">
+      <div className={`workspace${navOpen ? ' nav-open' : ''}`}>
+        <div
+          className={`sidebar-backdrop${navOpen ? ' is-visible' : ''}`}
+          aria-hidden="true"
+          onClick={() => setNavOpen(false)}
+        />
+
         <Sidebar
           teams={teams}
           view={view}
           personalCount={state.tasks.length}
           loading={teamsLoading}
+          open={navOpen}
           onCreateTeam={handleCreateTeam}
           onSelectPersonal={handleSelectPersonal}
           onSelectTeam={handleSelectTeam}
+          onClose={() => setNavOpen(false)}
         />
 
-        <div className="workspace-main">
+        <div className="workspace-main" inert={navOpen}>
           {view.kind === 'personal' ? (
             <PersonalView
               state={state}
